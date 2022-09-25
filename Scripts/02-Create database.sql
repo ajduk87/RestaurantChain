@@ -50,8 +50,8 @@ DROP TABLE IF EXISTS restaurantchain.Orders CASCADE;
 CREATE TABLE restaurantchain.Orders
 (
 	Id integer NOT NULL   DEFAULT NEXTVAL(('restaurantchain."orders_id_seq"'::text)::regclass),
-	Total NUMERIC(8,2) NOT NULL,
-	IsProcessed boolean NOT NULL
+	Total NUMERIC(6,2) NOT NULL,
+	Status integer NOT NULL
 );
 ALTER TABLE restaurantchain.Orders ADD CONSTRAINT PK_Orders
 	PRIMARY KEY (Id);
@@ -61,11 +61,14 @@ DROP TABLE IF EXISTS restaurantchain.OrderItems CASCADE;
 CREATE TABLE restaurantchain.OrderItems
 (
 	Id integer NOT NULL   DEFAULT NEXTVAL(('restaurantchain.orderitems_id_seq"'::text)::regclass),
+	Orderid integer NOT NULL,
 	MenuItemid integer NOT NULL,
 	Amount integer NOT NULL,
-	Value NUMERIC(8,2) NOT NULL
+	Value NUMERIC(4,2) NOT NULL
 );
 ALTER TABLE restaurantchain.orderitems ADD CONSTRAINT PK_Orderitem
 	PRIMARY KEY (Id);
 ALTER TABLE restaurantchain.OrderItems ADD CONSTRAINT FK_OrderItems_MenuItems
 	FOREIGN KEY (MenuItemid) REFERENCES restaurantchain.MenuItems (Id) ON DELETE No Action ON UPDATE No Action;
+ALTER TABLE restaurantchain.OrderItems ADD CONSTRAINT FK_OrderItems_Orders
+	FOREIGN KEY (Orderid) REFERENCES restaurantchain.Orders (Id) ON DELETE No Action ON UPDATE No Action;

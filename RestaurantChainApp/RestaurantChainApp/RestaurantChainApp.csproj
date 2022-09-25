@@ -5,9 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Factories\" />
     <Folder Include="Requests\" />
-    <Folder Include="Repositories\" />
   </ItemGroup>
 
   <ItemGroup>

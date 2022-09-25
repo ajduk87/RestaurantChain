@@ -4,6 +4,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using RestaurantChainApp.BusinessLogic;
+using RestaurantChainApp.Factories;
+using RestaurantChainApp.Services;
 
 namespace RestaurantChainApp
 {
@@ -21,6 +24,11 @@ namespace RestaurantChainApp
         {
             services.AddControllers();
             services.AddCors();
+
+
+            services.AddTransient<IEnvironmentSettingsFactory, EnvironmentSettingsFactory>();
+            services.AddTransient<IRestaurantChainService, RestaurantChainService>();
+            services.AddTransient<IPriceCalculator, PriceCalculator>();
 
             //Configure Swagger
             services.AddSwaggerGen();
