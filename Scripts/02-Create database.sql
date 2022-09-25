@@ -1,7 +1,6 @@
 
 DROP SEQUENCE IF EXISTS restaurantchain.menuitems_id_seq;
 
-DROP SEQUENCE IF EXISTS restaurantchain.customers_id_seq;
 
 DROP SEQUENCE IF EXISTS restaurantchain.orders_id_seq;
 
@@ -9,8 +8,6 @@ DROP SEQUENCE IF EXISTS restaurantchain.orderitems_id_seq;
 
 
 CREATE SEQUENCE restaurantchain.menuitems_id_seq INCREMENT 1 START 1;
-
-CREATE SEQUENCE restaurantchain.customers_id_seq INCREMENT 1 START 1;
 
 CREATE SEQUENCE restaurantchain.orders_id_seq INCREMENT 1 START 1;
 
@@ -47,20 +44,6 @@ ALTER TABLE restaurantchain.MealsDishes ADD CONSTRAINT FK_MealsDishes_Meals
 	FOREIGN KEY (MealId) REFERENCES restaurantchain.MenuItems (Id) ON DELETE No Action ON UPDATE No Action;
 	
 
-
-
-DROP TABLE IF EXISTS restaurantchain.Customers CASCADE;
-
-CREATE TABLE restaurantchain.Customers
-(
-	Id integer NOT NULL   DEFAULT NEXTVAL(('restaurantchain."customers_id_seq"'::text)::regclass),
-	Username varchar(500) UNIQUE NOT NULL,
-	Password BYTEA NOT NULL,
-	FirstName varchar(500) UNIQUE NOT NULL,
-	LastName varchar(500) UNIQUE NOT NULL
-);
-ALTER TABLE restaurantchain.Customers ADD CONSTRAINT PK_Customers
-	PRIMARY KEY (Id);
 
 DROP TABLE IF EXISTS restaurantchain.Orders CASCADE;
 
