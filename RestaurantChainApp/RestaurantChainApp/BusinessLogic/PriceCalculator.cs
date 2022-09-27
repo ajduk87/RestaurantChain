@@ -30,7 +30,14 @@ namespace RestaurantChainApp.BusinessLogic
 
         private double CalculateForMeal(Meal meal) 
         {
-            return mealPriceStrategy.Calculate(meal);
+            return IsHappyHour() ? Math.Round(0.8 * mealPriceStrategy.Calculate(meal), 2) :
+                                   Math.Round(mealPriceStrategy.Calculate(meal), 2);
+        }
+
+        private double CalculateForDish(Dish dish)
+        {
+            return IsHappyHour() ? Math.Round(0.8 * dishPriceStrategy.Calculate(dish) , 2):
+                                   Math.Round(dishPriceStrategy.Calculate(dish) , 2);
         }
 
         public List<Meal> CalculateForMeals(List<Meal> meals) 
@@ -39,21 +46,22 @@ namespace RestaurantChainApp.BusinessLogic
             foreach (var meal in meals) 
             {
                 meal.Price = CalculateForMeal(meal);
-                newMeals.Add((Meal)meal.Clone());
+                newMeals.Add(meal);
             }
 
             return newMeals;
         }
 
-        public double CalculateForOrderItem(Dish dish, int amount) 
+        public List<Dish> CalculateForDishes(List<Dish> dishes) 
         {
-            CalculationPriceStrategy calculationPrice = dish.IsMeal ? mealPriceStrategy : 
-                                             dishPriceStrategy;
+            List<Dish> newDishes = new List<Dish>();
+            foreach (var dish in dishes)
+            {
+                dish.Price = CalculateForDish(dish);
+                newDishes.Add(dish);
+            }
 
-            double price = IsHappyHour() ? Math.Round(0.8 * calculationPrice.Calculate(dish), 2) :
-                                           Math.Round(calculationPrice.Calculate(dish), 2);
-
-            return price;
+            return newDishes;
         }
     }
 }

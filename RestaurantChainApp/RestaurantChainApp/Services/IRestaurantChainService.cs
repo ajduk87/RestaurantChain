@@ -10,7 +10,7 @@ namespace RestaurantChainApp.Services
         List<Meal> GetMeals();
         
         OrderDto GetOrder(int orderid);
-        void CreateOrder(OrderDto order);
+        void CreateOrder(OrderDto orderDto);
         void ModifyOrder(OrderDto order);
         void RemoveOrder(int orderid);
     }

@@ -7,6 +7,6 @@ namespace RestaurantChainApp.BusinessLogic
     public interface IPriceCalculator
     {
         List<Meal> CalculateForMeals(List<Meal> meals);
-        double CalculateForOrderItem(Dish dish, int amount);
+        List<Dish> CalculateForDishes(List<Dish> dishes);
     }
 }

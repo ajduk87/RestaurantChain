@@ -69,6 +69,7 @@ namespace RestaurantChainApp.Services
                         meal.Dishes = this.mapper.Map<List<Dish>>(menuItemsForMeal);
                     }
 
+                    dishes = priceCalculator.CalculateForDishes(dishes);
                     meals = priceCalculator.CalculateForMeals(meals);
 
                     dishes.AddRange(meals);
@@ -95,6 +96,7 @@ namespace RestaurantChainApp.Services
                     List<MenuItem> menuItems = menuItemsRepository.SelectMenuItemsByIsMeal(connection, ismeal: false);
 
                     List<Dish> dishes = this.mapper.Map<List<Dish>>(menuItems);
+                    dishes = priceCalculator.CalculateForDishes(dishes);
 
                     return dishes;
                 }
