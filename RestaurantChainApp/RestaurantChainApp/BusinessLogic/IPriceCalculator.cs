@@ -5,6 +5,7 @@ namespace RestaurantChainApp.BusinessLogic
 {
     public interface IPriceCalculator
     {
-        double Calculate(Dish dish, int amount);
+        double CalculateForMeal(Meal meal);
+        double CalculateForOrderItem(Dish dish, int amount);
     }
 }

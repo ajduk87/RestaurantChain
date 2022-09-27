@@ -8,5 +8,20 @@ namespace RestaurantChainApp.Factories
         {
             return new MealsDishesRepository();
         }
+
+        public MenuItemsRepository CreateMenuItemsRepository() 
+        {
+            return new MenuItemsRepository();
+        }
+
+        public OrderItemsRepository CreateOrderItemsRepository() 
+        {
+            return new OrderItemsRepository();
+        }
+
+        public OrdersRepository CreateOrdersRepository() 
+        {
+            return new OrdersRepository();
+        }
     }
 }

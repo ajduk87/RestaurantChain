@@ -1,6 +1,6 @@
 ﻿namespace RestaurantChainApp.Dto
 {
-    public class Dish
+    public class Dish : Dto
     {
         public string Name { get; set; }
         public string Description { get; set; }

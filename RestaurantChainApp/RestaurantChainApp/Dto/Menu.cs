@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace RestaurantChainApp.Dto
 {
-    public class Menu : Entity
+    public class Menu : Dto
     {
-        public List<MenuItem> Items { get; set; }
+        public List<Dish> Dishes { get; set; }
 
-        public Menu(List<MenuItem> items)
+        public Menu(List<Dish> dishes)
         {
-            Items = items;
+            Dishes = dishes;
         }
     }
 }

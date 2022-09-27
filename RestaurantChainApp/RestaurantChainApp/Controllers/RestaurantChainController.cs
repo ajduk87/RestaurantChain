@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using RestaurantChainApp.BusinessLogic;
 using RestaurantChainApp.Dto;
-using RestaurantChainApp.Responses;
+using RestaurantChainApp.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,24 +13,22 @@ namespace RestaurantChainApp.Controllers
     [ApiController]
     [Route("[controller]")]
     public class RestaurantChainController : ControllerBase
-    {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+    {      
 
-        private readonly ILogger<RestaurantChainController> _logger;
+        private readonly ILogger<RestaurantChainController> logger;
+        private IRestaurantChainService restaurantChainService;
 
-        public RestaurantChainController(ILogger<RestaurantChainController> logger)
+        public RestaurantChainController(IRestaurantChainService restaurantChainService, ILogger<RestaurantChainController> logger)
         {
-            _logger = logger;
+            this.restaurantChainService = restaurantChainService;
+            this.logger = logger;
         }
 
-        [Route("MenuItems")]
+        [Route("GetMenu")]
         [HttpGet]
-        public GetMenuResponse GetMenuItems()
+        public Menu GetMenuItems()
         {
-            return new GetMenuResponse();
+            return this.restaurantChainService.GetMenu();
         }
     }
 }

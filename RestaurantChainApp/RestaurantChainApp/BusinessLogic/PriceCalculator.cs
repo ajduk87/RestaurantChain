@@ -3,6 +3,7 @@ using RestaurantChainApp.Dto;
 using RestaurantChainApp.Entities;
 using RestaurantChainApp.Factories;
 using System;
+using System.Collections.Generic;
 
 namespace RestaurantChainApp.BusinessLogic
 {
@@ -10,11 +11,15 @@ namespace RestaurantChainApp.BusinessLogic
     {
 
         private readonly EnvironmentSettings envSettings;
-        private CalculationPriceStrategy calculationPrice;
+        private readonly CalculationPriceStrategy dishPriceStrategy;
+        private readonly CalculationPriceStrategy mealPriceStrategy;
 
         public PriceCalculator(IEnvironmentSettingsFactory environmentSettingsFactory)
         {
             envSettings = environmentSettingsFactory.GetEnvironmentSettings();
+
+            dishPriceStrategy = new DishPriceStrategy();
+            mealPriceStrategy = new MealPriceStrategy();
         }
 
         private bool IsHappyHour() 
@@ -23,17 +28,19 @@ namespace RestaurantChainApp.BusinessLogic
             return currentHour >= envSettings.HappyHourBegin && currentHour <= envSettings.HappyHourEnd;
         }
 
-
-        public double Calculate(Dish dish, int amount) 
+        public double CalculateForMeal(Meal meal) 
         {
-            CalculationPriceStrategy dishPriceStrategy = new DishPriceStrategy();
-            CalculationPriceStrategy mealPriceStrategy = new MealPriceStrategy();
+            return mealPriceStrategy.Calculate(meal);
+        }
 
-            calculationPrice = dish.IsMeal ? mealPriceStrategy : 
+
+        public double CalculateForOrderItem(Dish dish, int amount) 
+        {
+            CalculationPriceStrategy calculationPrice = dish.IsMeal ? mealPriceStrategy : 
                                              dishPriceStrategy;
 
-            double price = IsHappyHour() ? 0.8 * calculationPrice.Calculate(dish) :
-                                         calculationPrice.Calculate(dish);
+            double price = IsHappyHour() ? Math.Round(0.8 * calculationPrice.Calculate(dish), 2) :
+                                           Math.Round(calculationPrice.Calculate(dish), 2);
 
             return price;
         }
