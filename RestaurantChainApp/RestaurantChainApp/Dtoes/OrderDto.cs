@@ -2,7 +2,7 @@
 using RestaurantChainApp.Enums;
 using System.Collections.Generic;
 
-namespace RestaurantChainApp.Dto
+namespace RestaurantChainApp.Dtoes
 {
     public class OrderDto : Dto
     {

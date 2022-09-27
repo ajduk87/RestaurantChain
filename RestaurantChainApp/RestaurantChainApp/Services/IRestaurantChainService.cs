@@ -1,4 +1,4 @@
-﻿using RestaurantChainApp.Dto;
+﻿using RestaurantChainApp.Dtoes;
 using System.Collections.Generic;
 
 namespace RestaurantChainApp.Services

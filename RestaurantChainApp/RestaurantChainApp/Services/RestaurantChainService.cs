@@ -1,5 +1,5 @@
 ﻿using RestaurantChainApp.BusinessLogic;
-using RestaurantChainApp.Dto;
+using RestaurantChainApp.Dtoes;
 using RestaurantChainApp.Entities;
 using RestaurantChainApp.Repositories;
 using RestaurantChainApp.Factories;
@@ -14,16 +14,15 @@ namespace RestaurantChainApp.Services
 {
     public class RestaurantChainService : IRestaurantChainService
     {
-        private IDatabaseConnectionFactory databaseConnectionFactory;
+        private readonly IDatabaseConnectionFactory databaseConnectionFactory;
 
         private IPriceCalculator priceCalculator { get; set; }
 
-        private MealsDishesRepository mealsDishesRepository;
-        private MenuItemsRepository menuItemsRepository;
-        private OrdersRepository ordersRepository;
-        private OrderItemsRepository orderItemsRepository;
+        private readonly MenuItemsRepository menuItemsRepository;
+        private readonly OrdersRepository ordersRepository;
+        private readonly OrderItemsRepository orderItemsRepository;
 
-        protected readonly IMapper mapper;
+        private readonly IMapper mapper;
 
 
         public RestaurantChainService(IPriceCalculator priceCalculator, 
@@ -32,7 +31,7 @@ namespace RestaurantChainApp.Services
         {
             this.priceCalculator = priceCalculator;
             this.databaseConnectionFactory = databaseConnectionFactory;
-            mealsDishesRepository = repositoryFactory.CreateMealsDishesRepository();
+
             menuItemsRepository = repositoryFactory.CreateMenuItemsRepository();
             ordersRepository = repositoryFactory.CreateOrdersRepository();
             orderItemsRepository = repositoryFactory.CreateOrderItemsRepository();
@@ -44,7 +43,7 @@ namespace RestaurantChainApp.Services
         {
             MapperConfiguration mapperConfiguration = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile<EntitiesToDtosProfile>();
+                cfg.AddProfile<EntitiesToDtoesProfile>();
             });
 
             return mapperConfiguration.CreateMapper();

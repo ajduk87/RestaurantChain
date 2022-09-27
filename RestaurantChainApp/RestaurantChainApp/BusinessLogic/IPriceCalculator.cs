@@ -1,4 +1,4 @@
-﻿using RestaurantChainApp.Dto;
+﻿using RestaurantChainApp.Dtoes;
 using RestaurantChainApp.Entities;
 
 namespace RestaurantChainApp.BusinessLogic

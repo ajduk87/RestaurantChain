@@ -1,5 +1,5 @@
 ﻿using RestaurantChainApp.BusinessLogic.CalculationPriceStrategies;
-using RestaurantChainApp.Dto;
+using RestaurantChainApp.Dtoes;
 using RestaurantChainApp.Entities;
 using RestaurantChainApp.Factories;
 using System;

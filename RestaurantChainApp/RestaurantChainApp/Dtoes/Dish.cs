@@ -1,4 +1,4 @@
-﻿namespace RestaurantChainApp.Dto
+﻿namespace RestaurantChainApp.Dtoes
 {
     public class Dish : Dto
     {

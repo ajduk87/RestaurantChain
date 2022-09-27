@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RestaurantChainApp.BusinessLogic;
-using RestaurantChainApp.Dto;
+using RestaurantChainApp.Dtoes;
+using RestaurantChainApp.Mappings;
+using RestaurantChainApp.Models.Order;
 using RestaurantChainApp.Services;
 using System;
 using System.Collections.Generic;
@@ -19,11 +22,24 @@ namespace RestaurantChainApp.Controllers
 
         private readonly ILogger<RestaurantChainController> logger;
         private IRestaurantChainService restaurantChainService;
+        private readonly IMapper mapper;
 
         public RestaurantChainController(IRestaurantChainService restaurantChainService, ILogger<RestaurantChainController> logger)
         {
             this.restaurantChainService = restaurantChainService;
             this.logger = logger;
+
+            this.mapper = GenerateMapper();
+        }
+
+        private IMapper GenerateMapper()
+        {
+            MapperConfiguration mapperConfiguration = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<ModelsToDtoes>();
+            });
+
+            return mapperConfiguration.CreateMapper();
         }
 
         [Route("GetMenu")]
@@ -56,8 +72,9 @@ namespace RestaurantChainApp.Controllers
 
         [Route("CreateOrder")]
         [HttpPost]
-        public HttpResponseMessage CreateOrder(OrderDto orderDto)
+        public HttpResponseMessage CreateOrder(CreateOrderModel createOrderModel)
         {
+            OrderDto orderDto = this.mapper.Map<OrderDto>(createOrderModel);
             this.restaurantChainService.CreateOrder(orderDto);
 
             return new HttpResponseMessage(HttpStatusCode.OK);
@@ -65,8 +82,9 @@ namespace RestaurantChainApp.Controllers
 
         [Route("ModifyOrder")]
         [HttpPut]
-        public HttpResponseMessage ModifyOrder(OrderDto orderDto)
+        public HttpResponseMessage ModifyOrder(UpdateOrderModel updateOrderModel)
         {
+            OrderDto orderDto = this.mapper.Map<OrderDto>(createOrderModel);
             this.restaurantChainService.ModifyOrder(orderDto);
 
             return new HttpResponseMessage(HttpStatusCode.OK);
