@@ -18,12 +18,19 @@ namespace RestaurantChainApp
         }
 
         public IConfiguration Configuration { get; }
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddCors();
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+                builder.AllowAnyOrigin();
+                builder.AllowAnyMethod();
+                builder.AllowAnyHeader();
+            }));
+
 
 
             services.AddTransient<IEnvironmentSettingsFactory, EnvironmentSettingsFactory>();
@@ -41,6 +48,7 @@ namespace RestaurantChainApp
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors("MyPolicy");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -60,7 +68,7 @@ namespace RestaurantChainApp
             app.UseSwagger();
             app.UseSwaggerUI();
 
-            app.UseCors();
+            app.UseHttpsRedirection();
             Sql.Load();
         }
     }

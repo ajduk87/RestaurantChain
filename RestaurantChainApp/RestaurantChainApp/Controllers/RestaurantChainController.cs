@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RestaurantChainApp.BusinessLogic;
 using RestaurantChainApp.Dtoes;
+using RestaurantChainApp.Entities;
 using RestaurantChainApp.Mappings;
 using RestaurantChainApp.Models.Order;
 using RestaurantChainApp.Services;
@@ -43,10 +45,10 @@ namespace RestaurantChainApp.Controllers
         }
 
         [Route("GetMenu")]
-        [HttpGet]
-        public Menu GetMenuItems()
+        [HttpGet]        
+        public List<Dish> GetMenuItems()
         {
-            return this.restaurantChainService.GetMenu();
+            return this.restaurantChainService.GetMenu().Dishes;
         }
 
         [Route("GetSingleDishes")]
@@ -84,7 +86,7 @@ namespace RestaurantChainApp.Controllers
         [HttpPut]
         public HttpResponseMessage ModifyOrder(UpdateOrderModel updateOrderModel)
         {
-            OrderDto orderDto = this.mapper.Map<OrderDto>(createOrderModel);
+            OrderDto orderDto = this.mapper.Map<OrderDto>(updateOrderModel);
             this.restaurantChainService.ModifyOrder(orderDto);
 
             return new HttpResponseMessage(HttpStatusCode.OK);
