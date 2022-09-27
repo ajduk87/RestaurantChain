@@ -6,6 +6,8 @@ using RestaurantChainApp.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace RestaurantChainApp.Controllers
@@ -43,6 +45,40 @@ namespace RestaurantChainApp.Controllers
         public List<Meal> GetMeals()
         {
             return this.restaurantChainService.GetMeals();
+        }
+
+        [Route("GetOrder")]
+        [HttpGet]
+        public OrderDto GetMeals(int orderid)
+        {
+            return this.restaurantChainService.GetOrder(orderid);
+        }
+
+        [Route("CreateOrder")]
+        [HttpPost]
+        public HttpResponseMessage CreateOrder(OrderDto orderDto)
+        {
+            this.restaurantChainService.CreateOrder(orderDto);
+
+            return new HttpResponseMessage(HttpStatusCode.OK);
+        }
+
+        [Route("ModifyOrder")]
+        [HttpPut]
+        public HttpResponseMessage ModifyOrder(OrderDto orderDto)
+        {
+            this.restaurantChainService.ModifyOrder(orderDto);
+
+            return new HttpResponseMessage(HttpStatusCode.OK);
+        }
+
+        [Route("RemoveOrder")]
+        [HttpDelete]
+        public HttpResponseMessage RemoveOrder(int orderid)
+        {
+            this.restaurantChainService.RemoveOrder(orderid);
+
+            return new HttpResponseMessage(HttpStatusCode.OK);
         }
     }
 }
