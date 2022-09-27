@@ -49,41 +49,36 @@ namespace RestaurantChainApp.Services
             return mapperConfiguration.CreateMapper();
         }
 
-        public Menu GetMenu() 
+        public List<Dish> GetMenu() 
         {
             using (NpgsqlConnection connection = databaseConnectionFactory.Create())
             {
-                connection.Open();
-                using (var transaction = connection.BeginTransaction())
+                try
                 {
-                    try
+                    connection.Open();
+
+                    List<MenuItem> menuItems = menuItemsRepository.SelectMenuItems(connection);
+
+                    List<Dish> dishes = this.mapper.Map<List<Dish>>(menuItems.Where(menuitem => !menuitem.IsMeal));
+                    List<Meal> meals = this.mapper.Map<List<Meal>>(menuItems.Where(menuitem => menuitem.IsMeal));
+
+                    foreach (var meal in meals)
                     {
-                        List<MenuItem> menuItems = menuItemsRepository.SelectMenuItems(connection, transaction);
+                        List<MenuItem> menuItemsForMeal = menuItemsRepository.SelectMenuItemsByMealId(connection, meal.Id);
 
-                        List<Dish> dishes = this.mapper.Map<List<Dish>>(menuItems.Where(menuitem => !menuitem.IsMeal));
-                        List<Meal> meals = this.mapper.Map<List<Meal>>(menuItems.Where(menuitem => menuitem.IsMeal));
-
-                        foreach (var meal in meals)
-                        {
-                            List<MenuItem> menuItemsForMeal = menuItemsRepository.SelectMenuItemsByMealId(connection, meal.Id, transaction);
-
-                            meal.Dishes = this.mapper.Map<List<Dish>>(menuItemsForMeal);
-                            meal.Price = priceCalculator.CalculateForMeal(meal);
-
-                        }
-
-                        dishes.AddRange(meals);
-
-                        Menu menu = new Menu(dishes);
-
-                        return menu;
+                        meal.Dishes = this.mapper.Map<List<Dish>>(menuItemsForMeal);
                     }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        return new Menu(new List<Dish>());
-                    }
-                  
+
+                    meals = priceCalculator.CalculateForMeals(meals);
+
+                    dishes.AddRange(meals);
+
+                    return dishes;
+                }
+                catch (Exception ex)
+                {
+
+                    return new List<Dish>();
                 }
             }
 
@@ -94,64 +89,58 @@ namespace RestaurantChainApp.Services
         {
             using (NpgsqlConnection connection = databaseConnectionFactory.Create())
             {
-                connection.Open();
-                using (var transaction = connection.BeginTransaction())
+                try
                 {
-                    try
-                    {
-                        List<MenuItem> menuItems = menuItemsRepository.SelectMenuItemsByIsMeal(connection, ismeal: false, transaction);
+                    connection.Open();
+                    List<MenuItem> menuItems = menuItemsRepository.SelectMenuItemsByIsMeal(connection, ismeal: false);
 
-                        List<Dish> dishes = this.mapper.Map<List<Dish>>(menuItems);
+                    List<Dish> dishes = this.mapper.Map<List<Dish>>(menuItems);
 
-                        return dishes;
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        return new List<Dish>();
-                    }
+                    return dishes;
+                }
+                catch (Exception ex)
+                {
+                    return new List<Dish>();
+                }
 
                 }
-            }
         }
         public List<Meal> GetMeals() 
         {
             using (NpgsqlConnection connection = databaseConnectionFactory.Create())
             {
-                connection.Open();
-                using (var transaction = connection.BeginTransaction())
+                
+                try
                 {
-                    try
+                    connection.Open();
+                    List<MenuItem> menuItems = menuItemsRepository.SelectMenuItemsByIsMeal(connection, ismeal: true);
+
+                    List<Meal> meals = this.mapper.Map<List<Meal>>(menuItems.Where(menuitem => menuitem.IsMeal));
+
+                    foreach (var meal in meals)
                     {
-                        List<MenuItem> menuItems = menuItemsRepository.SelectMenuItemsByIsMeal(connection, ismeal: true, transaction);
+                        List<MenuItem> menuItemsForMeal = menuItemsRepository.SelectMenuItemsByMealId(connection, meal.Id);
 
-                        List<Meal> meals = this.mapper.Map<List<Meal>>(menuItems.Where(menuitem => menuitem.IsMeal));
+                        meal.Dishes = this.mapper.Map<List<Dish>>(menuItemsForMeal);
 
-                        foreach (var meal in meals)
-                        {
-                            List<MenuItem> menuItemsForMeal = menuItemsRepository.SelectMenuItemsByMealId(connection, meal.Id, transaction);
+                        //menuItemsForMeal.ForEach(item => 
+                        //{
+                        //    Dish dish = this.mapper.Map<Dish>(item);
+                        //    meal.AddDish(dish);
+                        //});                           
 
-                            meal.Dishes = this.mapper.Map<List<Dish>>(menuItemsForMeal);
-
-                            //menuItemsForMeal.ForEach(item => 
-                            //{
-                            //    Dish dish = this.mapper.Map<Dish>(item);
-                            //    meal.AddDish(dish);
-                            //});
-                            meal.Price = priceCalculator.CalculateForMeal(meal);
-
-                        }
-
-
-                        return meals;
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        return new List<Meal>();
                     }
 
+                    meals = priceCalculator.CalculateForMeals(meals);
+
+
+                    return meals;
                 }
+                catch (Exception ex)
+                {
+                    return new List<Meal>();
+                }
+
             }
         }
 

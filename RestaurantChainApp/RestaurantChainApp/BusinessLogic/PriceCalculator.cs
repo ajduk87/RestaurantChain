@@ -28,11 +28,22 @@ namespace RestaurantChainApp.BusinessLogic
             return currentHour >= envSettings.HappyHourBegin && currentHour <= envSettings.HappyHourEnd;
         }
 
-        public double CalculateForMeal(Meal meal) 
+        private double CalculateForMeal(Meal meal) 
         {
             return mealPriceStrategy.Calculate(meal);
         }
 
+        public List<Meal> CalculateForMeals(List<Meal> meals) 
+        {
+            List<Meal> newMeals = new List<Meal>();
+            foreach (var meal in meals) 
+            {
+                meal.Price = CalculateForMeal(meal);
+                newMeals.Add((Meal)meal.Clone());
+            }
+
+            return newMeals;
+        }
 
         public double CalculateForOrderItem(Dish dish, int amount) 
         {

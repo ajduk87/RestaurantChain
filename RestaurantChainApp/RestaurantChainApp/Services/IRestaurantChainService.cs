@@ -5,7 +5,7 @@ namespace RestaurantChainApp.Services
 {
     public interface IRestaurantChainService
     {
-        Menu GetMenu();
+        List<Dish> GetMenu();
         List<Dish> GetSingleDishes();
         List<Meal> GetMeals();
         

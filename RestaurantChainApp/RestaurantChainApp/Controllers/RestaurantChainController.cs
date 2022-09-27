@@ -48,7 +48,7 @@ namespace RestaurantChainApp.Controllers
         [HttpGet]        
         public List<Dish> GetMenuItems()
         {
-            return this.restaurantChainService.GetMenu().Dishes;
+            return this.restaurantChainService.GetMenu();
         }
 
         [Route("GetSingleDishes")]
