@@ -8,8 +8,8 @@
 		"value": "SELECT menuitems.id, name, description, price, ismeal FROM restaurantchain.mealsdishes inner join restaurantchain.menuitems ON menuitems.id = mealsdishes.dishid where mealid = @mealid;"
 	},
 	{
-		"name": "beginHappyHour",
-		"value": "13"
+		"name": "SelectMenuItemsByIsMeal",
+		"value": "SELECT * FROM restaurantchain.menuitems where ismeal = @ismeal"
 	},
 	{
 		"name": "endHappyHour",

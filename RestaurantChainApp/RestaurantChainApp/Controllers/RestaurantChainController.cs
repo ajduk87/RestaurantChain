@@ -30,5 +30,19 @@ namespace RestaurantChainApp.Controllers
         {
             return this.restaurantChainService.GetMenu();
         }
+
+        [Route("GetSingleDishes")]
+        [HttpGet]
+        public List<Dish> GetSingleDishes()
+        {
+            return this.restaurantChainService.GetSingleDishes();
+        }
+
+        [Route("GetMeals")]
+        [HttpGet]
+        public List<Meal> GetMeals()
+        {
+            return this.restaurantChainService.GetMeals();
+        }
     }
 }

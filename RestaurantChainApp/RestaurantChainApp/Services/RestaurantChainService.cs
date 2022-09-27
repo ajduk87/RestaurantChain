@@ -90,19 +90,86 @@ namespace RestaurantChainApp.Services
 
           
         }
-        public Order GetOrder(int orderid)
+
+        public List<Dish> GetSingleDishes() 
         {
-            return new Order();
+            using (NpgsqlConnection connection = databaseConnectionFactory.Create())
+            {
+                connection.Open();
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        List<MenuItem> menuItems = menuItemsRepository.SelectMenuItemsByIsMeal(connection, ismeal: false, transaction);
+
+                        List<Dish> dishes = this.mapper.Map<List<Dish>>(menuItems);
+
+                        return dishes;
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        return new List<Dish>();
+                    }
+
+                }
+            }
+        }
+        public List<Meal> GetMeals() 
+        {
+            using (NpgsqlConnection connection = databaseConnectionFactory.Create())
+            {
+                connection.Open();
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        List<MenuItem> menuItems = menuItemsRepository.SelectMenuItemsByIsMeal(connection, ismeal: true, transaction);
+
+                        List<Meal> meals = this.mapper.Map<List<Meal>>(menuItems.Where(menuitem => menuitem.IsMeal));
+
+                        foreach (var meal in meals)
+                        {
+                            List<MenuItem> menuItemsForMeal = menuItemsRepository.SelectMenuItemsByMealId(connection, meal.Id, transaction);
+
+                            meal.Dishes = this.mapper.Map<List<Dish>>(menuItemsForMeal);
+
+                            //menuItemsForMeal.ForEach(item => 
+                            //{
+                            //    Dish dish = this.mapper.Map<Dish>(item);
+                            //    meal.AddDish(dish);
+                            //});
+                            meal.Price = priceCalculator.CalculateForMeal(meal);
+
+                        }
+
+
+                        return meals;
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        return new List<Meal>();
+                    }
+
+                }
+            }
         }
 
-        public void AddOrderItemToOrder(int orderid, OrderItem orderItem) 
+        public OrderDto GetOrder(int orderid)
+        {
+            return new OrderDto();
+        }
+
+        public void CreateOrder(OrderDto order) 
         {
         }
-        
-        public void CheckCurrentOrderState(int orderid) 
+
+        public void ModifyOrder(OrderDto order) 
         {
         }
-        public void CheckoutOrder(int orderid) 
+
+        public void RemoveOrder(int orderid) 
         {
         }
     }

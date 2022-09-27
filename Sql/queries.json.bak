@@ -5,7 +5,7 @@
 	},
 	{
 		"name": "SelectMenuItemsByMealId",
-		"value": "SELECT menuitems.id, name, description, price, ismeal FROM restaurantchain.mealsdishes inner join restaurantchain.menuitems ON menuitems.id = mealsdishes.dishid where mealid = @id;"
+		"value": "SELECT menuitems.id, name, description, price, ismeal FROM restaurantchain.mealsdishes inner join restaurantchain.menuitems ON menuitems.id = mealsdishes.dishid where mealid = @mealid;"
 	},
 	{
 		"name": "beginHappyHour",

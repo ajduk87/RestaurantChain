@@ -1,14 +1,17 @@
 ﻿using RestaurantChainApp.Dto;
-using RestaurantChainApp.Entities;
+using System.Collections.Generic;
 
 namespace RestaurantChainApp.Services
 {
     public interface IRestaurantChainService
     {
         Menu GetMenu();
-        void AddOrderItemToOrder(int orderid, OrderItem orderItem);
-        Order GetOrder(int orderid);
-        void CheckCurrentOrderState(int orderid);
-        void CheckoutOrder(int orderid);
+        List<Dish> GetSingleDishes();
+        List<Meal> GetMeals();
+        
+        OrderDto GetOrder(int orderid);
+        void CreateOrder(OrderDto order);
+        void ModifyOrder(OrderDto order);
+        void RemoveOrder(int orderid);
     }
 }
