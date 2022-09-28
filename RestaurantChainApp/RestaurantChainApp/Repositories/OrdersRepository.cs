@@ -14,6 +14,11 @@ namespace RestaurantChainApp.Repositories
             return connection.Query<Order>(Sql.Queries["SelectOrder"], new { orderid }).Single();
         }
 
+        public bool Exists(IDbConnection connection, int id, IDbTransaction transaction = null)
+        {
+            return connection.ExecuteScalar<bool>(Sql.Queries["ExistsOrder"], new { id });
+        }
+
 
         public long Insert(IDbConnection connection, Order order, IDbTransaction transaction = null) 
         {

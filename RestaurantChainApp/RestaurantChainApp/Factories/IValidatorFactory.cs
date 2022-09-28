@@ -4,7 +4,7 @@ namespace RestaurantChainApp.Factories
 {
     public interface IValidatorFactory
     {
-        CreateOrderValidator CreateOrderValidator();
-        UpdateOrderValidator UpdateOrderValidator();
+        OrderCreateValidator OrderCreateValidator();
+        OrderUpdateValidator OrderUpdateValidator();
     }
 }

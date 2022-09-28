@@ -89,7 +89,7 @@ namespace RestaurantChainApp.Controllers
         [HttpPost]
         public HttpResponseMessage CreateOrder(CreateOrderModel createOrderModel)
         {
-            ValidationResult validationResult = validatorFactory.CreateOrderValidator().Validate(createOrderModel);
+            ValidationResult validationResult = validatorFactory.OrderCreateValidator().Validate(createOrderModel);
             if (!validationResult.IsValid) 
             {
                 List<string> errors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
@@ -107,7 +107,7 @@ namespace RestaurantChainApp.Controllers
         [HttpPut]
         public HttpResponseMessage ModifyOrder(UpdateOrderModel updateOrderModel)
         {
-            ValidationResult validationResult = validatorFactory.UpdateOrderValidator().Validate(updateOrderModel);
+            ValidationResult validationResult = validatorFactory.OrderUpdateValidator().Validate(updateOrderModel);
             if (!validationResult.IsValid)
             {
                 List<string> errors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();

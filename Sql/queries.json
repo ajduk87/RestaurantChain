@@ -38,5 +38,9 @@
 	{
 		"name": "SelectOrderItems",
 		"value": "SELECT * FROM restaurantchain.orderitems where orderid = @orderid;"
+	},
+	{
+		"name": "ExistsOrder",
+		"value": "SELECT EXISTS (SELECT 1 FROM restaurantchain.orders WHERE id = @id);"
 	}
 ]
