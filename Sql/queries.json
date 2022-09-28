@@ -12,7 +12,7 @@
 		"value": "SELECT * FROM restaurantchain.menuitems where ismeal = @ismeal"
 	},
 	{
-		"name": "endHappyHour",
-		"value": "15"
+		"name": "UpdateMenuItem",
+		"value": "UPDATE restaurantchain.menuitems SET Price = @price WHERE id = @id"
 	}
 ]

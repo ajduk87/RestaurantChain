@@ -8,6 +8,9 @@ namespace RestaurantChainApp.Mappings
     {
         public DtoToEntitesProfile()
         {
+            CreateMap<Dish, MenuItem>();
+            CreateMap<Meal, MenuItem>();
+
             CreateMap<OrderDto, Order>();
             CreateMap<OrderItemDto, OrderItem>();
         }

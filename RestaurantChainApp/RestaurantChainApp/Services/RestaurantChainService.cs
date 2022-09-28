@@ -44,6 +44,7 @@ namespace RestaurantChainApp.Services
             MapperConfiguration mapperConfiguration = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile<EntitiesToDtoesProfile>();
+                cfg.AddProfile<DtoToEntitesProfile>();
             });
 
             return mapperConfiguration.CreateMapper();
@@ -53,34 +54,45 @@ namespace RestaurantChainApp.Services
         {
             using (NpgsqlConnection connection = databaseConnectionFactory.Create())
             {
-                try
-                {
-                    connection.Open();
-
-                    List<MenuItem> menuItems = menuItemsRepository.SelectMenuItems(connection);
-
-                    List<Dish> dishes = this.mapper.Map<List<Dish>>(menuItems.Where(menuitem => !menuitem.IsMeal));
-                    List<Meal> meals = this.mapper.Map<List<Meal>>(menuItems.Where(menuitem => menuitem.IsMeal));
-
-                    foreach (var meal in meals)
+             connection.Open();
+                    using (var transaction = connection.BeginTransaction())
                     {
-                        List<MenuItem> menuItemsForMeal = menuItemsRepository.SelectMenuItemsByMealId(connection, meal.Id);
+                        try
+                        {
+                            List<MenuItem> menuItems = menuItemsRepository.SelectMenuItems(connection, transaction);
 
-                        meal.Dishes = this.mapper.Map<List<Dish>>(menuItemsForMeal);
+                            List<Dish> dishes = this.mapper.Map<List<Dish>>(menuItems.Where(menuitem => !menuitem.IsMeal));
+                            List<Meal> meals = this.mapper.Map<List<Meal>>(menuItems.Where(menuitem => menuitem.IsMeal));
+
+                            foreach (var meal in meals)
+                            {
+                                List<MenuItem> menuItemsForMeal = menuItemsRepository.SelectMenuItemsByMealId(connection, meal.Id, transaction);
+
+                                meal.Dishes = this.mapper.Map<List<Dish>>(menuItemsForMeal);
+                            }
+
+                            dishes = priceCalculator.CalculateForDishes(dishes);
+                            meals = priceCalculator.CalculateForMeals(meals);
+
+                            dishes.AddRange(meals);
+
+                            menuItems = this.mapper.Map<List<MenuItem>>(dishes);
+
+                            foreach (var menuItem in menuItems)
+                            {
+                                menuItemsRepository.Update(connection, menuItem, transaction);
+                            }
+                            transaction.Commit();
+
+                            return dishes;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            return new List<Dish>();
+                        }
                     }
-
-                    dishes = priceCalculator.CalculateForDishes(dishes);
-                    meals = priceCalculator.CalculateForMeals(meals);
-
-                    dishes.AddRange(meals);
-
-                    return dishes;
-                }
-                catch (Exception ex)
-                {
-
-                    return new List<Dish>();
-                }
+              
             }
 
           
@@ -90,58 +102,82 @@ namespace RestaurantChainApp.Services
         {
             using (NpgsqlConnection connection = databaseConnectionFactory.Create())
             {
-                try
-                {
-                    connection.Open();
-                    List<MenuItem> menuItems = menuItemsRepository.SelectMenuItemsByIsMeal(connection, ismeal: false);
+              connection.Open();
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        try
+                        {
+                            List<MenuItem> menuItems = menuItemsRepository.SelectMenuItemsByIsMeal(connection, ismeal: false, transaction);
 
-                    List<Dish> dishes = this.mapper.Map<List<Dish>>(menuItems);
-                    dishes = priceCalculator.CalculateForDishes(dishes);
+                            List<Dish> dishes = this.mapper.Map<List<Dish>>(menuItems);
+                            dishes = priceCalculator.CalculateForDishes(dishes);
 
-                    return dishes;
-                }
-                catch (Exception ex)
-                {
-                    return new List<Dish>();
-                }
+                            menuItems = this.mapper.Map<List<MenuItem>>(dishes);
 
-                }
+                            foreach (var menuItem in menuItems)
+                            {
+                                menuItemsRepository.Update(connection, menuItem, transaction);
+                            }
+                            transaction.Commit();
+
+                        return dishes;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            return new List<Dish>();
+                        }
+
+                    }
+            }
+                
         }
         public List<Meal> GetMeals() 
         {
             using (NpgsqlConnection connection = databaseConnectionFactory.Create())
             {
-                
-                try
-                {
-                    connection.Open();
-                    List<MenuItem> menuItems = menuItemsRepository.SelectMenuItemsByIsMeal(connection, ismeal: true);
-
-                    List<Meal> meals = this.mapper.Map<List<Meal>>(menuItems.Where(menuitem => menuitem.IsMeal));
-
-                    foreach (var meal in meals)
+               connection.Open();
+                    using (var transaction = connection.BeginTransaction())
                     {
-                        List<MenuItem> menuItemsForMeal = menuItemsRepository.SelectMenuItemsByMealId(connection, meal.Id);
+                        try
+                        {
+                            List<MenuItem> menuItems = menuItemsRepository.SelectMenuItemsByIsMeal(connection, ismeal: true, transaction);
 
-                        meal.Dishes = this.mapper.Map<List<Dish>>(menuItemsForMeal);
+                            List<Meal> meals = this.mapper.Map<List<Meal>>(menuItems.Where(menuitem => menuitem.IsMeal));
 
-                        //menuItemsForMeal.ForEach(item => 
-                        //{
-                        //    Dish dish = this.mapper.Map<Dish>(item);
-                        //    meal.AddDish(dish);
-                        //});                           
+                            foreach (var meal in meals)
+                            {
+                                List<MenuItem> menuItemsForMeal = menuItemsRepository.SelectMenuItemsByMealId(connection, meal.Id, transaction);
 
+                                meal.Dishes = this.mapper.Map<List<Dish>>(menuItemsForMeal);
+
+                                //menuItemsForMeal.ForEach(item => 
+                                //{
+                                //    Dish dish = this.mapper.Map<Dish>(item);
+                                //    meal.AddDish(dish);
+                                //});                           
+
+                            }
+
+                            meals = priceCalculator.CalculateForMeals(meals);
+
+                            menuItems = this.mapper.Map<List<MenuItem>>(meals);
+
+                            foreach (var menuItem in menuItems)
+                            {
+                                menuItemsRepository.Update(connection, menuItem, transaction);
+                            }
+                            transaction.Commit();
+
+                        return meals;
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            return new List<Meal>();
+                        }
                     }
-
-                    meals = priceCalculator.CalculateForMeals(meals);
-
-
-                    return meals;
-                }
-                catch (Exception ex)
-                {
-                    return new List<Meal>();
-                }
+                
 
             }
         }
@@ -153,6 +189,23 @@ namespace RestaurantChainApp.Services
 
         public void CreateOrder(OrderDto order) 
         {
+            using (NpgsqlConnection connection = this.databaseConnectionFactory.Create())
+            {
+                connection.Open();
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                      
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        Console.Write(ex.Message);
+                    }
+                }
+            }
         }
 
         public void ModifyOrder(OrderDto order) 

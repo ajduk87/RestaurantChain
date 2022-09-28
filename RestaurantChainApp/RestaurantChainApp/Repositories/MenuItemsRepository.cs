@@ -23,5 +23,14 @@ namespace RestaurantChainApp.Repositories
         {
             return connection.Query<MenuItem>(Sql.Queries["SelectMenuItemsByIsMeal"], new { ismeal = ismeal }).AsList();
         }
+
+        public void Update(IDbConnection connection, MenuItem menuItem, IDbTransaction transaction = null) 
+        {
+            connection.Execute(Sql.Queries["UpdateMenuItem"], new
+            {
+                id = menuItem.Id,
+                price = menuItem.Price
+            });
+        }
     }
 }

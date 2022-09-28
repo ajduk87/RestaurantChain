@@ -22,7 +22,7 @@ CREATE TABLE restaurantchain.MenuItems
 	Id integer NOT NULL   DEFAULT NEXTVAL(('restaurantchain.menuitems_id_seq"'::text)::regclass),	
 	Name varchar(150) UNIQUE NOT NULL,
 	Description varchar(1500) NULL,
-	Price NUMERIC(3,2),
+	Price NUMERIC(6,2),
 	IsMeal boolean NOT NULL
 );
 
