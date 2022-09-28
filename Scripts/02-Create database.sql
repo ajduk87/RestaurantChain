@@ -23,7 +23,8 @@ CREATE TABLE restaurantchain.MenuItems
 	Name varchar(150) UNIQUE NOT NULL,
 	Description varchar(1500) NULL,
 	Price NUMERIC(6,2),
-	IsMeal boolean NOT NULL
+	IsMeal boolean NOT NULL,
+	ImgUrl varchar(2000) NULL
 );
 
 ALTER TABLE restaurantchain.MenuItems ADD CONSTRAINT PK_MenuItems

@@ -71,6 +71,13 @@ namespace RestaurantChainApp.Controllers
             return this.restaurantChainService.GetMeals();
         }
 
+        [Route("HappyHour")]
+        [HttpGet]
+        public HappyHour HappyHour()
+        {
+            return this.restaurantChainService.HappyHour();
+        }
+
         [Route("GetOrder")]
         [HttpGet]
         public OrderDto GetMeals(int orderid)

@@ -12,5 +12,6 @@ namespace RestaurantChainApp.Services
         OrderDto GetOrder(int orderid);
         void CreateOrder(OrderDto orderDto);
         void ModifyOrder(OrderDto orderDto);
+        HappyHour HappyHour();
     }
 }

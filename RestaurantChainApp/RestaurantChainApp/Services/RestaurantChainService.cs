@@ -17,19 +17,23 @@ namespace RestaurantChainApp.Services
         private readonly IDatabaseConnectionFactory databaseConnectionFactory;
 
         private IPriceCalculator priceCalculator { get; set; }
+        private IHappyHourCalculator happyHourCalculator { get; set; }
 
         private readonly MenuItemsRepository menuItemsRepository;
         private readonly OrdersRepository ordersRepository;
         private readonly OrderItemsRepository orderItemsRepository;
 
         private readonly IMapper mapper;
-
+        private readonly EnvironmentSettings envSettings;
 
         public RestaurantChainService(IPriceCalculator priceCalculator, 
                                       IRepositoryFactory repositoryFactory,
-                                      IDatabaseConnectionFactory databaseConnectionFactory)
+                                      IDatabaseConnectionFactory databaseConnectionFactory,
+                                      IHappyHourCalculator happyHourCalculator,
+                                      IEnvironmentSettingsFactory environmentSettingsFactory)
         {
             this.priceCalculator = priceCalculator;
+            this.happyHourCalculator = happyHourCalculator;
             this.databaseConnectionFactory = databaseConnectionFactory;
 
             menuItemsRepository = repositoryFactory.CreateMenuItemsRepository();
@@ -37,6 +41,8 @@ namespace RestaurantChainApp.Services
             orderItemsRepository = repositoryFactory.CreateOrderItemsRepository();
 
             this.mapper = GenerateMapper();
+            this.happyHourCalculator = happyHourCalculator;
+            envSettings = environmentSettingsFactory.GetEnvironmentSettings();
         }
 
         private IMapper GenerateMapper()
@@ -71,8 +77,10 @@ namespace RestaurantChainApp.Services
                                 meal.Dishes = this.mapper.Map<List<Dish>>(menuItemsForMeal);
                             }
 
-                            dishes = priceCalculator.CalculateForDishes(dishes);
-                            meals = priceCalculator.CalculateForMeals(meals);
+                            bool isHappyHour = happyHourCalculator.IsHappyHour(currentHour: DateTime.Now.Hour, envSettings.HappyHourBegin, envSettings.HappyHourEnd);
+
+                            dishes = priceCalculator.CalculateForDishes(dishes, isHappyHour);
+                            meals = priceCalculator.CalculateForMeals(meals, isHappyHour);
 
                             dishes.AddRange(meals);
 
@@ -110,7 +118,9 @@ namespace RestaurantChainApp.Services
                             List<MenuItem> menuItems = menuItemsRepository.SelectMenuItemsByIsMeal(connection, ismeal: false, transaction);
 
                             List<Dish> dishes = this.mapper.Map<List<Dish>>(menuItems);
-                            dishes = priceCalculator.CalculateForDishes(dishes);
+                            bool isHappyHour = happyHourCalculator.IsHappyHour(currentHour: DateTime.Now.Hour, envSettings.HappyHourBegin, envSettings.HappyHourEnd);
+
+                            dishes = priceCalculator.CalculateForDishes(dishes, isHappyHour);
 
                             menuItems = this.mapper.Map<List<MenuItem>>(dishes);
 
@@ -159,17 +169,19 @@ namespace RestaurantChainApp.Services
 
                             }
 
-                            meals = priceCalculator.CalculateForMeals(meals);
+                            bool isHappyHour = happyHourCalculator.IsHappyHour(currentHour: DateTime.Now.Hour, envSettings.HappyHourBegin, envSettings.HappyHourEnd);
 
-                            menuItems = this.mapper.Map<List<MenuItem>>(meals);
+                            meals = priceCalculator.CalculateForMeals(meals, isHappyHour);
 
-                            foreach (var menuItem in menuItems)
-                            {
-                                menuItemsRepository.Update(connection, menuItem, transaction);
-                            }
-                            transaction.Commit();
+                                menuItems = this.mapper.Map<List<MenuItem>>(meals);
 
-                        return meals;
+                                foreach (var menuItem in menuItems)
+                                {
+                                    menuItemsRepository.Update(connection, menuItem, transaction);
+                                }
+                                transaction.Commit();
+
+                            return meals;
                         }
                         catch (Exception ex)
                         {
@@ -267,6 +279,15 @@ namespace RestaurantChainApp.Services
                     }
                 }
             }
+        }
+
+        public HappyHour HappyHour() 
+        {
+            return new HappyHour 
+            {
+                HappyHourBegin = envSettings.HappyHourBegin,
+                HappyHourEnd = envSettings.HappyHourEnd
+            };
         }
 
     }

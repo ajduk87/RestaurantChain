@@ -9,55 +9,46 @@ namespace RestaurantChainApp.BusinessLogic
 {
     public class PriceCalculator : IPriceCalculator
     {
-
-        private readonly EnvironmentSettings envSettings;
+      
         private readonly CalculationPriceStrategy dishPriceStrategy;
         private readonly CalculationPriceStrategy mealPriceStrategy;
 
-        public PriceCalculator(IEnvironmentSettingsFactory environmentSettingsFactory)
+        public PriceCalculator()
         {
-            envSettings = environmentSettingsFactory.GetEnvironmentSettings();
-
             dishPriceStrategy = new DishPriceStrategy();
             mealPriceStrategy = new MealPriceStrategy();
-        }
+        }      
 
-        private bool IsHappyHour() 
+        private double CalculateForMeal(Meal meal, bool isHappyHour) 
         {
-            int currentHour = DateTime.Now.Hour;
-            return currentHour >= envSettings.HappyHourBegin && currentHour <= envSettings.HappyHourEnd;
-        }
-
-        private double CalculateForMeal(Meal meal) 
-        {
-            return IsHappyHour() ? Math.Round(0.8 * mealPriceStrategy.Calculate(meal), 2) :
+            return isHappyHour ? Math.Round(0.8 * mealPriceStrategy.Calculate(meal), 2) :
                                    Math.Round(mealPriceStrategy.Calculate(meal), 2);
         }
 
-        private double CalculateForDish(Dish dish)
+        private double CalculateForDish(Dish dish, bool isHappyHour)
         {
-            return IsHappyHour() ? Math.Round(0.8 * dishPriceStrategy.Calculate(dish) , 2):
+            return isHappyHour ? Math.Round(0.8 * dishPriceStrategy.Calculate(dish) , 2):
                                    Math.Round(dishPriceStrategy.Calculate(dish) , 2);
         }
 
-        public List<Meal> CalculateForMeals(List<Meal> meals) 
+        public List<Meal> CalculateForMeals(List<Meal> meals, bool isHappyHour) 
         {
             List<Meal> newMeals = new List<Meal>();
             foreach (var meal in meals) 
             {
-                meal.Price = CalculateForMeal(meal);
+                meal.Price = CalculateForMeal(meal, isHappyHour);
                 newMeals.Add(meal);
             }
 
             return newMeals;
         }
 
-        public List<Dish> CalculateForDishes(List<Dish> dishes) 
+        public List<Dish> CalculateForDishes(List<Dish> dishes, bool isHappyHour) 
         {
             List<Dish> newDishes = new List<Dish>();
             foreach (var dish in dishes)
             {
-                dish.Price = CalculateForDish(dish);
+                dish.Price = CalculateForDish(dish, isHappyHour);
                 newDishes.Add(dish);
             }
 

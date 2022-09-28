@@ -6,7 +6,7 @@ namespace RestaurantChainApp.BusinessLogic
 {
     public interface IPriceCalculator
     {
-        List<Meal> CalculateForMeals(List<Meal> meals);
-        List<Dish> CalculateForDishes(List<Dish> dishes);
+        List<Meal> CalculateForMeals(List<Meal> meals, bool isHappyHour);
+        List<Dish> CalculateForDishes(List<Dish> dishes, bool isHappyHour);
     }
 }

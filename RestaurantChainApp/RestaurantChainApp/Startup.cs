@@ -38,6 +38,7 @@ namespace RestaurantChainApp
             services.AddTransient<IDatabaseConnectionFactory, DatabaseConnectionFactory>();
             services.AddTransient<IRestaurantChainService, RestaurantChainService>();
             services.AddTransient<IPriceCalculator, PriceCalculator>();
+            services.AddTransient<IHappyHourCalculator, HappyHourCalculator>();
 
 
             services.AddLocalization();
