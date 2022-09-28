@@ -19,7 +19,7 @@ namespace RestaurantChainApp.Repositories
         {
             return connection.ExecuteScalar<long>(Sql.Queries["InsertOrderItem"], new
             {
-                id = orderItem.Id,
+                
                 orderid = orderItem.OrderId,
                 menuitemid = orderItem.MenuItemId,
                 amount = orderItem.Amount,

@@ -233,10 +233,11 @@ namespace RestaurantChainApp.Services
                         Order order = this.mapper.Map<Order>(orderDto);
                         List<OrderItem> orderItems = this.mapper.Map<List<OrderItem>>(orderDto.orderItems);
 
-                        ordersRepository.Insert(connection, order, transaction);
+                        long orderid = ordersRepository.Insert(connection, order, transaction);
 
                         foreach (var orderItem in orderItems)
                         {
+                            orderItem.OrderId = orderid;
                             orderItemsRepository.Insert(connection, orderItem, transaction);
                         }
 

@@ -17,11 +17,11 @@
 	},
 	{
 		"name": "InsertOrder",
-		"value": "INSERT INTO restaurantchain.orders(total, status)VALUES (@total, @status) RETURNING id;"
+		"value": "INSERT INTO restaurantchain.orders(id, total, status)VALUES (@id, @total, @status);"
 	},
 	{
 		"name": "InsertOrderItem",
-		"value": "INSERT INTO restaurantchain.orderitems(orderid, menuitemid, amount, value)VALUES (@orderid, @menuitemid, @amount, @value) RETURNING id;"
+		"value": "INSERT INTO restaurantchain.orderitems(id, orderid, menuitemid, amount, value)VALUES (@id, @orderid, @menuitemid, @amount, @value);"
 	},
 	{
 		"name": "UpdateOrder",

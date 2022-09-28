@@ -9,3 +9,5 @@
 /RestaurantChainApp/RestaurantChainApp/bin/Debug/netcoreapp3.1
 /RestaurantChainApp/RestaurantChainApp.Unit.Tests/bin/Debug/netcoreapp3.1
 /RestaurantChainApp/RestaurantChainApp.Unit.Tests/obj
+/RestaurantChainApp/RestaurantChainApp.Integration.Tests/bin/Debug/netcoreapp3.1
+/RestaurantChainApp/RestaurantChainApp.Integration.Tests/obj

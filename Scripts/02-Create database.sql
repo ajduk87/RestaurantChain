@@ -19,7 +19,7 @@ DROP TABLE IF EXISTS restaurantchain.MenuItems CASCADE;
 
 CREATE TABLE restaurantchain.MenuItems
 (
-	Id integer NOT NULL   DEFAULT NEXTVAL(('restaurantchain.menuitems_id_seq"'::text)::regclass),	
+	Id integer NOT NULL   DEFAULT NEXTVAL(('restaurantchain.menuitems_id_seq'::text)::regclass),	
 	Name varchar(150) UNIQUE NOT NULL,
 	Description varchar(1500) NULL,
 	Price NUMERIC(6,2),
@@ -50,7 +50,7 @@ DROP TABLE IF EXISTS restaurantchain.Orders CASCADE;
 
 CREATE TABLE restaurantchain.Orders
 (
-	Id integer NOT NULL   DEFAULT NEXTVAL(('restaurantchain."orders_id_seq"'::text)::regclass),
+	Id integer NOT NULL   DEFAULT NEXTVAL(('restaurantchain.orders_id_seq'::text)::regclass),
 	Total NUMERIC(6,2) NOT NULL,
 	Status integer NOT NULL
 );
@@ -61,7 +61,7 @@ DROP TABLE IF EXISTS restaurantchain.OrderItems CASCADE;
 
 CREATE TABLE restaurantchain.OrderItems
 (
-	Id integer NOT NULL   DEFAULT NEXTVAL(('restaurantchain.orderitems_id_seq"'::text)::regclass),
+	Id integer NOT NULL   DEFAULT NEXTVAL(('restaurantchain.orderitems_id_seq'::text)::regclass),
 	Orderid integer NOT NULL,
 	MenuItemid integer NOT NULL,
 	Amount integer NOT NULL,

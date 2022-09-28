@@ -24,7 +24,6 @@ namespace RestaurantChainApp.Repositories
         {
                 return connection.ExecuteScalar<long>(Sql.Queries["InsertOrder"], new
                 {
-                    id = order.Id,
                     total = order.Total,
                     status = order.Status
                 });
