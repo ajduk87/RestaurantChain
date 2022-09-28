@@ -184,10 +184,32 @@ namespace RestaurantChainApp.Services
 
         public OrderDto GetOrder(int orderid)
         {
-            return new OrderDto();
+            using (NpgsqlConnection connection = this.databaseConnectionFactory.Create())
+            {
+                connection.Open();
+                
+                    try
+                    {
+                        OrderDto orderDto = new OrderDto();
+
+                        Order order = ordersRepository.SelectOrder(connection, orderid);
+                        List<OrderItem> orderItems = orderItemsRepository.SelectOrderItems(connection, orderid);
+
+                        orderDto = this.mapper.Map<OrderDto>(order);
+                        orderDto.orderItems = this.mapper.Map<List<OrderItemDto>>(orderItems);
+
+                        return orderDto;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Write(ex.Message);
+                        return new OrderDto();
+                    }
+                
+            }
         }
 
-        public void CreateOrder(OrderDto order) 
+        public void CreateOrder(OrderDto orderDto) 
         {
             using (NpgsqlConnection connection = this.databaseConnectionFactory.Create())
             {
@@ -196,7 +218,16 @@ namespace RestaurantChainApp.Services
                 {
                     try
                     {
-                      
+                        Order order = this.mapper.Map<Order>(orderDto);
+                        List<OrderItem> orderItems = this.mapper.Map<List<OrderItem>>(orderDto.orderItems);
+
+                        ordersRepository.Insert(connection, order, transaction);
+
+                        foreach (var orderItem in orderItems)
+                        {
+                            orderItemsRepository.Insert(connection, orderItem, transaction);
+                        }
+
                         transaction.Commit();
                     }
                     catch (Exception ex)
@@ -208,12 +239,35 @@ namespace RestaurantChainApp.Services
             }
         }
 
-        public void ModifyOrder(OrderDto order) 
+        public void ModifyOrder(OrderDto orderDto) 
         {
+            using (NpgsqlConnection connection = this.databaseConnectionFactory.Create())
+            {
+                connection.Open();
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        Order order = this.mapper.Map<Order>(orderDto);
+                        List<OrderItem> orderItems = this.mapper.Map<List<OrderItem>>(orderDto.orderItems);
+
+                        ordersRepository.Update(connection, order, transaction);
+
+                        foreach (var orderItem in orderItems)
+                        {
+                            orderItemsRepository.Update(connection, orderItem, transaction);
+                        }
+
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        Console.Write(ex.Message);
+                    }
+                }
+            }
         }
 
-        public void RemoveOrder(int orderid) 
-        {
-        }
     }
 }

@@ -37,6 +37,6 @@
 	},
 	{
 		"name": "SelectOrderItems",
-		"value": "SELECT * FROM restaurantchain.orderitems where orderid = @orderid;"
+		"value": "SELECT * FROM restaurantchain.orderitems;"
 	}
 ]

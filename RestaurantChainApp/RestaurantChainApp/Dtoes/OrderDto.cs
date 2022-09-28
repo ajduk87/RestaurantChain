@@ -9,5 +9,10 @@ namespace RestaurantChainApp.Dtoes
         public List<OrderItemDto> orderItems { get; set; }
         public double Total { get; set; }
         public OrderStatus Status { get; set; }
+
+        public OrderDto()
+        {
+            orderItems = new List<OrderItemDto>();
+        }
     }
 }

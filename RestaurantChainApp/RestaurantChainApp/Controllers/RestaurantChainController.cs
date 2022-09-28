@@ -91,14 +91,6 @@ namespace RestaurantChainApp.Controllers
 
             return new HttpResponseMessage(HttpStatusCode.OK);
         }
-
-        [Route("RemoveOrder")]
-        [HttpDelete]
-        public HttpResponseMessage RemoveOrder(int orderid)
-        {
-            this.restaurantChainService.RemoveOrder(orderid);
-
-            return new HttpResponseMessage(HttpStatusCode.OK);
-        }
+        
     }
 }

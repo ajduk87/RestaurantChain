@@ -11,7 +11,6 @@ namespace RestaurantChainApp.Services
         
         OrderDto GetOrder(int orderid);
         void CreateOrder(OrderDto orderDto);
-        void ModifyOrder(OrderDto order);
-        void RemoveOrder(int orderid);
+        void ModifyOrder(OrderDto orderDto);
     }
 }

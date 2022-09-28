@@ -5,7 +5,6 @@
         InProgress,
         Confirmed,
         Paid,
-        Cancelled,
-        ErrorInCalculation
+        Cancelled
     }
 }
