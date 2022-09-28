@@ -34,6 +34,7 @@ namespace RestaurantChainApp
 
             services.AddTransient<IEnvironmentSettingsFactory, EnvironmentSettingsFactory>();
             services.AddTransient<IRepositoryFactory, RepositoryFactory>();
+            services.AddTransient<IValidatorFactory, ValidatorFactory>();
             services.AddTransient<IDatabaseConnectionFactory, DatabaseConnectionFactory>();
             services.AddTransient<IRestaurantChainService, RestaurantChainService>();
             services.AddTransient<IPriceCalculator, PriceCalculator>();

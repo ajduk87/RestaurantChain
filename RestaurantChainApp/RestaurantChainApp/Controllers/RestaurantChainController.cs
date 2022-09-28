@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RestaurantChainApp.BusinessLogic;
 using RestaurantChainApp.Dtoes;
 using RestaurantChainApp.Entities;
+using RestaurantChainApp.Factories;
 using RestaurantChainApp.Mappings;
 using RestaurantChainApp.Models.Order;
 using RestaurantChainApp.Services;
@@ -24,11 +26,15 @@ namespace RestaurantChainApp.Controllers
 
         private readonly ILogger<RestaurantChainController> logger;
         private IRestaurantChainService restaurantChainService;
+        private IValidatorFactory validatorFactory;
         private readonly IMapper mapper;
 
-        public RestaurantChainController(IRestaurantChainService restaurantChainService, ILogger<RestaurantChainController> logger)
+        public RestaurantChainController(IRestaurantChainService restaurantChainService,
+                                         IValidatorFactory validatorFactory,
+                                         ILogger<RestaurantChainController> logger)
         {
             this.restaurantChainService = restaurantChainService;
+            this.validatorFactory = validatorFactory;
             this.logger = logger;
 
             this.mapper = GenerateMapper();
@@ -76,6 +82,14 @@ namespace RestaurantChainApp.Controllers
         [HttpPost]
         public HttpResponseMessage CreateOrder(CreateOrderModel createOrderModel)
         {
+            ValidationResult validationResult = validatorFactory.CreateOrderValidator().Validate(createOrderModel);
+            if (!validationResult.IsValid) 
+            {
+                List<string> errors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
+                logger.LogError(string.Join(",", errors));
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            }
+
             OrderDto orderDto = this.mapper.Map<OrderDto>(createOrderModel);
             this.restaurantChainService.CreateOrder(orderDto);
 
@@ -86,6 +100,14 @@ namespace RestaurantChainApp.Controllers
         [HttpPut]
         public HttpResponseMessage ModifyOrder(UpdateOrderModel updateOrderModel)
         {
+            ValidationResult validationResult = validatorFactory.UpdateOrderValidator().Validate(updateOrderModel);
+            if (!validationResult.IsValid)
+            {
+                List<string> errors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
+                logger.LogError(string.Join(",", errors));
+                return new HttpResponseMessage(HttpStatusCode.BadRequest);
+            }
+
             OrderDto orderDto = this.mapper.Map<OrderDto>(updateOrderModel);
             this.restaurantChainService.ModifyOrder(orderDto);
 
